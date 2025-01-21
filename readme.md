@@ -5,16 +5,20 @@
 1. INTRODUCCIÓN GENERAL DEL PROYECTO
 
         1.1.Título del proyecto:
+
             Lyringo
 
         1.2.Participantes en el mismo y ciclo formativo:
+
             Carlos Carralero, Diego Mendoza, Iván Reollo y Tirso Morató. 
 
         1.3.Tipo de proyecto:
+
             Aplicación web interactiva centrada en el aprendizaje de idiomas mediante la
             música.
 
         1.4.Área de conocimiento
+        
             Desarrollo de aplicaciones web, aprendizaje de idiomas y entretenimiento educativo.
 
 2. DEFINICIÓN DEL PROBLEMA O NECESIDAD DETECTADA
@@ -35,37 +39,38 @@
 
 4. ALCANCE
 
-        Usuarios objetivo:
+        4.1 Usuarios objetivo:
             Personas interesadas en aprender idiomas y fanáticos de la música que buscan una forma
             diferente y entretenida de mejorar sus habilidades lingüísticas.
-        Características principales:
 
-            Búsqueda personalizada:
+        4.2 Características principales:
+
+            a) Búsqueda personalizada:
 
                 Los usuarios podrán buscar canciones por título, artista o incluso frases específicas.
 
-            Letras interactivas:
+            b) Letras interactivas:
 
                 Visualización de letras con anotaciones que explican vocabulario y gramática.
 
-            Ejercicios educativos:
+            c) Ejercicios educativos:
 
                  de práctica que incluyen rellenar huecos, preguntas de vocabulario y traducción inversa.
 
-            Perfiles de usuario:
+            d) Perfiles de usuario:
 
-            Registro de actividades, artistas favoritos, últimas canciones escuchadas, y progreso en el idioma.
+            e) Registro de actividades, artistas favoritos, últimas canciones escuchadas, y progreso en el idioma.
 
-            Visualización de tendencias:
+            f) Visualización de tendencias:
 
-            Reportes sobre géneros más escuchados o artistas populares según la interacción de los usuarios.
+            g) Reportes sobre géneros más escuchados o artistas populares según la interacción de los usuarios.
 
-            Tecnologías utilizadas:
+            h) Tecnologías utilizadas:
 
-            Frontend: HTML, CSS, JavaScript
+                · Frontend: HTML, CSS, JavaScript
 
-            Backend: Node.js
+                · Backend: Node.js
 
-            Base de datos: Firebase, sqlite
+                · Base de datos: Firebase, sqlite
 
-            APIs: Integración con servicios como Spotify, Genius o YouTube para acceder a música y letras.
+                · APIs: Integración con servicios como Spotify, Genius o YouTube para acceder a música y letras.
