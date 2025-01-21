@@ -1,8 +1,9 @@
                     Desarrollo de aplicaciones web
-                    
-    Carlos Carralero, Diego Mendoza, Iván Reollo y Tirso Morató.
+
+        Carlos Carralero, Diego Mendoza, Iván Reollo y Tirso Morató.
 
 1. INTRODUCCIÓN GENERAL DEL PROYECTO
+
         1.1.Título del proyecto:
             Lyringo
 
@@ -17,6 +18,7 @@
             Desarrollo de aplicaciones web, aprendizaje de idiomas y entretenimiento educativo.
 
 2. DEFINICIÓN DEL PROBLEMA O NECESIDAD DETECTADA
+
         Actualmente, muchas personas desean aprender un idioma de forma entretenida y efectiva,
         pero encuentran métodos tradicionales como libros o clases formales poco motivadores.
 
@@ -32,6 +34,7 @@
         interactivos y análisis del contenido musical.
 
 4. ALCANCE
+
         Usuarios objetivo:
             Personas interesadas en aprender idiomas y fanáticos de la música que buscan una forma
             diferente y entretenida de mejorar sus habilidades lingüísticas.
