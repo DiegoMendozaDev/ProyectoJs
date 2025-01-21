@@ -8,17 +8,13 @@
 
             Lyringo
 
-        1.2.Participantes en el mismo y ciclo formativo:
-
-            Carlos Carralero, Diego Mendoza, Iván Reollo y Tirso Morató. 
-
-        1.3.Tipo de proyecto:
+        1.2.Tipo de proyecto:
 
             Aplicación web interactiva centrada en el aprendizaje de idiomas mediante la
             música.
 
-        1.4.Área de conocimiento
-        
+        1.3.Área de conocimiento
+
             Desarrollo de aplicaciones web, aprendizaje de idiomas y entretenimiento educativo.
 
 2. DEFINICIÓN DEL PROBLEMA O NECESIDAD DETECTADA
@@ -39,11 +35,12 @@
 
 4. ALCANCE
 
-        4.1 Usuarios objetivo:
+        4.1. Usuarios objetivo:
+        
             Personas interesadas en aprender idiomas y fanáticos de la música que buscan una forma
             diferente y entretenida de mejorar sus habilidades lingüísticas.
 
-        4.2 Características principales:
+        4.2. Características principales:
 
             a) Búsqueda personalizada:
 
@@ -55,17 +52,17 @@
 
             c) Ejercicios educativos:
 
-                 de práctica que incluyen rellenar huecos, preguntas de vocabulario y traducción inversa.
+                Modos de práctica que incluyen rellenar huecos, preguntas de vocabulario y traducción inversa.
 
             d) Perfiles de usuario:
 
-            e) Registro de actividades, artistas favoritos, últimas canciones escuchadas, y progreso en el idioma.
+                Registro de actividades, artistas favoritos, últimas canciones escuchadas, y progreso en el idioma.
 
-            f) Visualización de tendencias:
+            e) Visualización de tendencias:
 
-            g) Reportes sobre géneros más escuchados o artistas populares según la interacción de los usuarios.
+                Reportes sobre géneros más escuchados o artistas populares según la interacción de los usuarios.
 
-            h) Tecnologías utilizadas:
+            f) Tecnologías utilizadas:
 
                 · Frontend: HTML, CSS, JavaScript
 
