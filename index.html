@@ -9,4 +9,10 @@
     <h1>hola mundo</h1>
     jajadfjas
 </body>
+<script>
+	fetch('/test')
+	.then(response => response.json())
+	.then(datos => pintarTabla(datos))
+	.catch(err => console.error(err));
+</script>
 </html>
