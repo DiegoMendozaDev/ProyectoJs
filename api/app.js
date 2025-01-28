@@ -3,7 +3,8 @@ const serverless = require('serverless-http'); // Para adaptar Express al entorn
 const app = express();
 
 // Define tus rutas
-app.get('/', (req, res) => {
+app.get('/test', (req, res) => {
+    console.log('hola');
     res.send('¡Hola, mundo con Express en Vercel!');
 });
 
