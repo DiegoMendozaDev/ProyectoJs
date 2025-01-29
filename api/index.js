@@ -5,7 +5,10 @@ const app = express();
 app.get('/', (req, res) => {
   res.send('¡Express en Vercel! 🚀');
 });
-
+// Ver Usuarios
+app.get('/usuarios', (req, res) => {
+  res.send('Todos los usuarios');
+});
 // Exporta para Vercel
 module.exports = app;
 

@@ -27,16 +27,4 @@ try {
 } finally {
     await client.end();
 }
-
-
-// Ejecuta la función (solo una vez)
 crearTabla();
-// // Ejemplo de ruta con consulta
-// app.get('/usuarios', async (req, res) => {
-//   try {
-//     const result = await client.query('SELECT * FROM usuarios');
-//     res.json(result.rows);
-//   } catch (error) {
-//     res.status(500).send('Error en la DB: ' + error.message);
-//   }
-// });
