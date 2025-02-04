@@ -66,8 +66,8 @@
 
                 · Frontend: HTML, CSS, JavaScript
 
-                · Backend: Node.js con Express
+                · Backend: Node.js
 
-                · Base de datos: Neon con PostgreSQL
+                · Base de datos: Firebase, sqlite
 
                 · APIs: Integración con servicios como Spotify, Genius o YouTube para acceder a música y letras.
