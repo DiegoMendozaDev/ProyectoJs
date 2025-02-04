@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canción Elegida</title>
+</head>
+<body>
+  <h1>Detalles de la Canción</h1>
+  
+  <div id="cancionDetalles">
+    <p><strong>Nombre de la Canción:</strong> <span id="nombreCancion"></span></p>
+    <p><strong>Artista:</strong> <span id="nombreArtista"></span></p>
+    <h3>Letra:</h3>
+    <div id="letra"></div>
+  </div>
+
+  <button id="volver">Volver atrás</button>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const nombreCancion = urlParams.get('nombreCancion');
+    const nombreArtista = urlParams.get('nombreArtista');
+    const letra = urlParams.get('letra');
+
+    document.getElementById('nombreCancion').textContent = nombreCancion;
+    document.getElementById('nombreArtista').textContent = nombreArtista;
+    document.getElementById('letra').innerHTML = letra.replace(/\n/g, "<br>");
+
+    document.getElementById('volver').addEventListener('click', () => {
+        window.history.back();  
+    });
+  </script>
+</body>
+</html>
