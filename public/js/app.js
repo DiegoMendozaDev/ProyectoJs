@@ -55,18 +55,13 @@ function fetchLetra(idCancion, index, idiomaELegido, contenedor, nombreCancion, 
         
         const elegirBtn = document.createElement('button');
         elegirBtn.textContent = "Elegir";
-        const favCancion = document.createElement('button')
-        favCancion.textContent = "Agregar Favorita";
       
         contenedorCancion.innerHTML += "<br>";
         contenedorCancion.appendChild(elegirBtn);
         
         contenedor.appendChild(contenedorCancion);
-        contenedor.appendChild(favCancion);
-        favCancion.addEventListener('click', () => {
-          cancionesFavoritas.push({cancion : nombreCancion, artista : nombreArtista, idioma : data.lyrics.language});
-          window.localStorage.setItem('favCan',JSON.stringify(cancionesFavoritas));
-        })
+
+
         elegirBtn.addEventListener('click', () => {
           const parametros = new URLSearchParams({
             nombreCancion: nombreCancion,
