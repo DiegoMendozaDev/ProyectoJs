@@ -6,15 +6,25 @@
   <title>Buscar Canciones por Idioma</title>
 </head>
 <body>
-  <h1>Buscar Canciones por Idioma</h1>
+  <div id="header"><h1>Buscar Canciones por Idioma</h1></div>
   
-  <label for="languageInput">Ingresa un idioma:</label>
-  <input type="text" id="languageInput" placeholder="Ej. es,en,fr..." />
+  
+  <label for="lenguaje">Ingresa un idioma:</label>
+  <select id="lenguaje">
+    <option value="es">Español</option>
+    <option value="en">Inglés</option>
+    <option value="fr">Francés</option>
+    <option value="de">Alemán</option>
+    <option value="ru">Ruso</option>
+    <option value="ja">Japonés</option>
+    <option value="ca">Catalán</option>
+  </select>
+  
   <button id="searchButton">Buscar</button>
 
   <h2>Resultados:</h2>
-  <div id="results"></div>
+  <div id="resultados"></div>
 
-  <script src="./js/app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

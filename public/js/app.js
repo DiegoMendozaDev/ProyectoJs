@@ -2,6 +2,8 @@ const url = 'https://spotify23.p.rapidapi.com/search/';
 const query = 'track';
 const limit = 2;
 const delayTime = 1;
+const header = document.getElementById('header');
+
 /**
  * Se utiliza para sacar los ids de las canciones para usarlos posteriormente en otras funciones
  * @param {*} offset Esta funcion recibe 'offset', que seria un numero random generado al iniciar la funcion padre, este offset seria un numero aleatorio del 0 al 1000 para sacar una cancion aleatoria en spotify
@@ -19,6 +21,7 @@ function fetchCanciones(offset) {
   })
   .then(response => response.json());
 }
+
 /**
  *  Esta funcion recibe el id de la cancion recibido de la funcion fetchCanciones, index es la posicion de la cancion, userLenguage es el idioma que el usuario escribe por teclado,contenedor es el contenido del artista,nombre de la cancion etc,nombreCancion el nombre de la cancion y nombreArtista el nombre del artista
  * @param {*} idCancion 
@@ -29,7 +32,7 @@ function fetchCanciones(offset) {
  * @param {*} nombreArtista 
  */
 function fetchLetra(idCancion, index, idiomaELegido, contenedor, nombreCancion, nombreArtista) {
-  setTimeout(() => {
+
     fetch(`https://spotify23.p.rapidapi.com/track_lyrics/?id=${idCancion}`, {
       method: 'GET',
       headers: {
@@ -52,12 +55,18 @@ function fetchLetra(idCancion, index, idiomaELegido, contenedor, nombreCancion, 
         
         const elegirBtn = document.createElement('button');
         elegirBtn.textContent = "Elegir";
-        
+        const favCancion = document.createElement('button')
+        favCancion.textContent = "Agregar Favorita";
+      
         contenedorCancion.innerHTML += "<br>";
         contenedorCancion.appendChild(elegirBtn);
         
         contenedor.appendChild(contenedorCancion);
-
+        contenedor.appendChild(favCancion);
+        favCancion.addEventListener('click', () => {
+          cancionesFavoritas.push({cancion : nombreCancion, artista : nombreArtista, idioma : data.lyrics.language});
+          window.localStorage.setItem('favCan',JSON.stringify(cancionesFavoritas));
+        })
         elegirBtn.addEventListener('click', () => {
           const parametros = new URLSearchParams({
             nombreCancion: nombreCancion,
@@ -72,8 +81,10 @@ function fetchLetra(idCancion, index, idiomaELegido, contenedor, nombreCancion, 
     .catch(error => {
       console.error('Error al obtener la letra o el idioma:', error);
     });
-  }, index * delayTime);
+    //, index * delayTime para que al hacer muchas solicitudes vaya mejor y no se pare tanto,es decir para poner pausas entre solicitudes, iria dentro de la funcion setTimeout si queremos implementarla
+
 }
+
 
 
 
@@ -82,14 +93,14 @@ function fetchLetra(idCancion, index, idiomaELegido, contenedor, nombreCancion, 
  * @param {*} idiomaELegido 
  * @returns 
  */
-function searchByLanguage(idiomaELegido) {
+function buscarPorIdioma(idiomaELegido) {
   if (!idiomaELegido) {
-    alert('Por favor, ingresa un código de idioma válido.');
+    alert('Introduce un lenguaje válido');
     return;
   }
 
   let offset = Math.floor(Math.random() * 1000);
-  const contenedor = document.getElementById('results');
+  const contenedor = document.getElementById('resultados');
   contenedor.innerHTML = '';
 //Hacemos el fetch de canciones para sacar aleatoriamente 1 cancion y sacar el id,nombre y artista de esta cancion
   fetchCanciones(offset)
@@ -115,18 +126,7 @@ function searchByLanguage(idiomaELegido) {
 }
 
 document.getElementById('searchButton').addEventListener('click', () => {
-  const idiomaELegido = document.getElementById('languageInput').value.trim();
+  const idiomaELegido = document.getElementById('lenguaje').value.trim();
 
-  if (!idiomaELegido) {
-    alert('Por favor, ingresa un código de idioma válido (ej. "es", "en", "ko")');
-    return;
-  }
-
-  const idiomaValido = ['en', 'es', 'ko', 'fr', 'de', 'it', 'ja', 'pt', 'ru', 'pl'];
-  if (!idiomaValido.includes(idiomaELegido)) {
-    alert('El código de idioma ingresado no es válido. Ejemplos válidos: "en", "es", "ko" , "pt", etc.');
-    return;
-  }
-
-  searchByLanguage(idiomaELegido);
+  buscarPorIdioma(idiomaELegido);
 });
