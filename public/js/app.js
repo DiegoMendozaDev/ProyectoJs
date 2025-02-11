@@ -120,7 +120,7 @@ function buscarPorIdioma(idiomaELegido) {
     });
 }
 
-document.getElementById('searchButton').addEventListener('click', () => {
+document.getElementById('searchLenguaje').addEventListener('click', () => {
   const idiomaELegido = document.getElementById('lenguaje').value.trim();
 
   buscarPorIdioma(idiomaELegido);
