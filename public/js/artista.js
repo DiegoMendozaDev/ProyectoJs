@@ -14,7 +14,7 @@ function buscarArtista() {
         try {
             console.log("Respuesta completa de la API:", data);
             let h1 = document.createElement("h1");
-            h1.textContent = ` Aqui tienes las 5 canciones elegidas por spotify de ${artista}`
+            h1.textContent = ` Aqui tienes las 5 canciones elegidas por spotify de ${data.artists.items[0].data.profile.name}`
             let body = document.getElementsByTagName("body")[0];
             body.appendChild(h1);
             let ul = document.createElement("ul");
@@ -25,6 +25,16 @@ function buscarArtista() {
                 li.textContent = data.albums.items[i].data.name;
                 ul.appendChild(li);
             }
+            let h2 = document.createElement("h1");
+            h2.textContent=` Aqui tienes una foto del cantante ${data.artists.items[0].data.profile.name}: `
+            body.appendChild(h2)
+           
+            let img = document.createElement("img");
+         
+            img.setAttribute("src", data.artists.items[0].data.visuals.avatarImage.sources[2].url)
+            
+            body.appendChild(img)
+          
             
             } catch (error) {
                 console.log("Error al parsear la respuesta:", error);
