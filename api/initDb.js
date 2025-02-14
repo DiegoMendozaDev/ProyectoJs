@@ -1,4 +1,4 @@
-const pool = require("./db");//Carga el archivo db.js para la conexión con la bd y poder comunicarnos con la bd
+const pool = require("./bd");//Carga el archivo db.js para la conexión con la bd y poder comunicarnos con la bd
 
 /**
  * Constante para crear la tabla de usuarios
