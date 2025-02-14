@@ -10,12 +10,22 @@
   
   <div id="cancionDetalles">
     <p><strong>Nombre de la Canción:</strong> <span id="nombreCancion"></span></p>
-    <p><strong>Artista:</strong> <span id="nombreArtista"> </span></p>
-    <button onclick="enviarNombre()">Ver mas del Artista</button> 
+    <p><strong>Artista:</strong> <span id="nombreArtista"> <form action="masartista.html"><button type="submit">Ver mas del artista</button></form> </span></p>
     <h3>Letra:</h3>
     <div id="letra"></div>
   </div>
-ñ
+  <label for="lenguaje">Elige el idioma al que se traducirá la cancion</label>
+  <select id="lenguaje">
+    <option value="es">Español</option>
+    <option value="en">Inglés</option>
+    <option value="fr">Francés</option>
+    <option value="de">Alemán</option>
+    <option value="ru">Ruso</option>
+    <option value="ja">Japonés</option>
+    <option value="ca">Catalán</option>
+  </select>
+<div id="traduccion"></div>
+  <button id="mostrarTraduccion">Mostrar traduccion</button>
   <button id="volver">Volver atrás</button>
 
   <script>
@@ -23,6 +33,7 @@
     const nombreCancion = urlParams.get('nombreCancion');
     const nombreArtista = urlParams.get('nombreArtista');
     const letra = urlParams.get('letra');
+    const idiomaElegido = urlParams.get('idioma');
 
     document.getElementById('nombreCancion').textContent = nombreCancion;
     document.getElementById('nombreArtista').textContent = nombreArtista;
@@ -31,9 +42,42 @@
     document.getElementById('volver').addEventListener('click', () => {
         window.history.back();  
     });
-    function enviarNombre(){
-      window.location.href="masartista.html?nombre=" + encodeURIComponent(nombreArtista);
-    }
+    
+    const trad = document.getElementById("mostrarTraduccion");
+    trad.addEventListener("click", function(){
+      const idiomaATraducir = document.getElementById("lenguaje").value.trim();
+      traductor(idiomaElegido,idiomaATraducir,letra)
+    })
+    function traductor(idiomaElegido,idiomaATraducir,letra) {
+      let contenedor = document.getElementById("traduccion");
+      const urlTraduccion = 'https://deep-translate1.p.rapidapi.com/language/translate/v2';
+      const options = {
+        method: 'POST',
+        headers: {
+          'x-rapidapi-key': 'd894c02f4dmshaa97023ade66176p18471fjsne8b1860b93cd',
+          'x-rapidapi-host': 'deep-translate1.p.rapidapi.com',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          q: letra,
+          source: idiomaElegido,
+          target: idiomaATraducir
+        })
+      };
+
+      fetch(urlTraduccion, options)
+        .then(response => response.json())
+        .then(resultado => {
+          
+          let prueba = resultado["data"]["translations"]["translatedText"].replaceAll("<br>","<br><br>")
+          contenedor.innerHTML = prueba;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+
+  }
+
   </script>
 </body>
 </html>

@@ -16,7 +16,7 @@ function fetchCanciones(offset,nombreArtista) {
     method: 'GET',
     headers: {
       'X-RapidAPI-Host': 'spotify23.p.rapidapi.com',
-      'X-RapidAPI-Key': 'ade3a10122msh3051862a836956fp1ea309jsn1fa708edae4f',
+      'X-RapidAPI-Key': 'd894c02f4dmshaa97023ade66176p18471fjsne8b1860b93cd',
       'Content-Type': 'application/json',
     },
   })
@@ -26,7 +26,7 @@ function fetchCanciones(offset,nombreArtista) {
       method: 'GET',
       headers: {
         'X-RapidAPI-Host': 'spotify23.p.rapidapi.com',
-        'X-RapidAPI-Key': 'ade3a10122msh3051862a836956fp1ea309jsn1fa708edae4f',
+        'X-RapidAPI-Key': 'd894c02f4dmshaa97023ade66176p18471fjsne8b1860b93cd',
         'Content-Type': 'application/json',
       },
     })
@@ -49,12 +49,13 @@ function fetchLetra(idCancion, index, idiomaElegido = null, contenedor, nombreCa
       method: 'GET',
       headers: {
         'X-RapidAPI-Host': 'spotify23.p.rapidapi.com',
-        'X-RapidAPI-Key': 'ade3a10122msh3051862a836956fp1ea309jsn1fa708edae4f',
+        'X-RapidAPI-Key': 'd894c02f4dmshaa97023ade66176p18471fjsne8b1860b93cd',
         'Content-Type': 'application/json',
       },
     })
     .then(response => response.json())
     .then(data => {
+      let lenguaje = data["lyrics"]["language"];
       if(idiomaElegido === null){
         let letra = "";
         for (let i = 0; i < data.lyrics.lines.length; i++) {
@@ -84,7 +85,7 @@ function fetchLetra(idCancion, index, idiomaElegido = null, contenedor, nombreCa
 
           window.location.href = `cancionElegida.html?${parametros}`;
         });
-      }else{
+      }else if(idiomaElegido != null && lenguaje === idiomaElegido){
         
         let letra = "";
         for (let i = 0; i < data.lyrics.lines.length; i++) {
@@ -107,7 +108,8 @@ function fetchLetra(idCancion, index, idiomaElegido = null, contenedor, nombreCa
           const parametros = new URLSearchParams({
             nombreCancion: nombreCancion,
             nombreArtista: nombreArtista,
-            letra: letra
+            letra: letra,
+            idioma: idiomaElegido
           }).toString();
 
           window.location.href = `cancionElegida.html?${parametros}`;
@@ -147,7 +149,7 @@ function buscarPorIdioma(idiomaElegido) {
           const idCancion = track.data.id;
           const nombreCancion = track.data.name;
           const nombreArtista = track.data.artists.items[0].profile.name;
-
+          console.log(track);
           console.log(`Obteniendo idioma de la canción con ID: ${idCancion}`);
           //Hacemos el fetch de la leltra para sacar el lenguaje de la cancion y la letra de esta
           fetchLetra(idCancion, index, idiomaElegido, contenedor, nombreCancion, nombreArtista);
@@ -190,5 +192,4 @@ document.getElementById('searchLenguaje').addEventListener('click', () => {
     buscarPorCancion(nombreCancion);
   }
 });
-
 
