@@ -1,33 +1,53 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Buscar Canciones por Idioma</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lyringo</title>
+    <link rel="icon" type="image/png" href="./assets/img/logo.svg"/>
+    <link rel="stylesheet" href="./css/general.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/egg.js/1.0/egg.min.js"></script>
+    <script>
+        if (!document.cookie) {
+            window.location.href = "/login";
+        }
+    </script>
 </head>
 <body>
-  <div id="header"><h1>Buscar Canciones por Idioma</h1></div>
-  
-  
-  <label for="lenguaje">Ingresa un idioma:</label>
-  <select id="lenguaje">
-    <option value="es">Español</option>
-    <option value="en">Inglés</option>
-    <option value="fr">Francés</option>
-    <option value="de">Alemán</option>
-    <option value="ru">Ruso</option>
-    <option value="ja">Japonés</option>
-    <option value="ca">Catalán</option>
-  </select>
-  <label for="nombreCancion">Buscar nombre de cancion:
-  <input type="text" name="nombreCancion" id="nombreCancion"> </label>
-  <br>
-  <br>
-  <button id="searchLenguaje">Buscar</button>
+    <div class="cursor cursor-click"></div>
+    <div id="filters">
+        <div class="filter-group">
+            <div class="select-container">
+                <select class="smooth-select" id="lenguaje">
+                    <option selected value="0">Select a language</option>
+                    <option value="es">Español</option>
+                    <option value="en">Inglés</option>
+                    <option value="fr">Francés</option>
+                    <option value="de">Alemán</option>
+                    <option value="ru">Ruso</option>
+                    <option value="ja">Japonés</option>
+                    <option value="ca">Catalán</option>
+                </select>
+            </div>
+            <input type="text" placeholder="Type a song" id="nombreCancion">
+            <button class="filter-button" id="searchLenguaje">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </div>
 
-  <h2>Resultados:</h2>
-  <div id="resultados"></div>
-
-  <script src="./js/app.js"></script>
+        <div class="user-group">
+            <div class="user-container">
+                <i class="fa-solid fa-user" style="font-size: 24px;"></i>
+                <p id="username">Username</p>
+            </div>
+            <a id="logoff" href="#" class="button">Log Off</a> 
+        </div>
+    </div>
+    <div id="resultados"></div>
 </body>
+<script src="./js/index.js"></script>
+<script src="./js/general.js"></script>
 </html>
