@@ -11,6 +11,7 @@ const pwdB = document.getElementById("pwd_rule");
 const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|[a-zA-Z0-9.-]+\.es)$/;
 const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{5,}$/;
 
+//Añadimos estilos
 for (let i = 0; i < inputs.length; i++) {
     inputs[i].addEventListener("focus", function () {
         this.style.border = '1px solid #5057d4';
@@ -29,57 +30,42 @@ for (let i = 0; i < inputs.length; i++) {
     });
 }
 
+//Para ver y ocultar las contraseñas
 for (let i = 0; i < seePw.length; i++) {
-    seePw[i].addEventListener("mousedown", function () {
+    seePw[i].addEventListener("click", function () {
         let passwordInput = this.closest('.input-container').getElementsByTagName('input')[0];
-        passwordInput.type = "text";
-        this.textContent = "visibility";
-    });
 
-    seePw[i].addEventListener("mouseup", function () {
-        let passwordInput = this.closest('.input-container').getElementsByTagName('input')[0];
-        passwordInput.type = "password";
-        this.textContent = "visibility_off";
-    });
-
-    seePw[i].addEventListener("mouseout", function () {
-        let passwordInput = this.closest('.input-container').getElementsByTagName('input')[0];
-        passwordInput.type = "password";
-        this.textContent = "visibility_off";
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            this.textContent = "visibility";
+        } else {
+            passwordInput.type = "password";
+            this.textContent = "visibility_off";
+        }
     });
 }
 
+/**
+ * Validamos si el imput se ajusta a nuestra resticciones con el uso de regex, también añadimos estilos en funcion de lo ocurrido
+ * @param {*} event - para identificar el elemento del dom
+ */
 function validateInput(event) {
     const target = event.target;
 
     let isEmailValid = emailLogin.value.trim() !== "" && emailRegex.test(emailLogin.value.trim());
     if (target === emailLogin) {
-        if (isEmailValid) {
-            emailB.style.color = "green";
-            emailB.classList.remove("animate__animated", "animate__headShake");
-            void emailB.offsetWidth;
-            emailB.classList.add("animate__animated", "animate__pulse");
-        } else {
-            emailB.style.color = "red";
-            emailB.classList.remove("animate__animated", "animate__headShake");
-            void emailB.offsetWidth;
-            emailB.classList.add("animate__animated", "animate__headShake");
-        }
+        emailB.style.color = isEmailValid ? "green" : "red";
+        emailB.classList.remove("animate__animated", "animate__headShake");
+        void emailB.offsetWidth;
+        emailB.classList.add("animate__animated", isEmailValid ? "animate__pulse" : "animate__headShake");
     }
 
     let isPasswordValid = passwordLogin.value.trim() !== "" && passwordRegex.test(passwordLogin.value.trim());
     if (target === passwordLogin) {
-        if (isPasswordValid) {
-            pwdB.style.color = "green";
-            pwdB.classList.remove("animate__animated", "animate__headShake");
-            void pwdB.offsetWidth;
-            pwdB.classList.add("animate__animated", "animate__pulse");
-        } else {
-            pwdB.style.color = "red";
-            pwdB.classList.remove("animate__animated", "animate__headShake");
-            void pwdB.offsetWidth;
-            pwdB.classList.add("animate__animated", "animate__headShake");
-        }
+        pwdB.style.color = isPasswordValid ? "green" : "red";
+        pwdB.classList.remove("animate__animated", "animate__headShake");
+        void pwdB.offsetWidth;
+        pwdB.classList.add("animate__animated", isPasswordValid ? "animate__pulse" : "animate__headShake");
     }
 
     const allRight = isEmailValid && isPasswordValid;
@@ -89,6 +75,9 @@ function validateInput(event) {
     logInButton.style.cursor = allRight ? "pointer" : "not-allowed";
 }
 
+/**
+ * Para iniciar sesión, recogemos los valores de los imputs y los pasamos al back mediante fetch, en funcion de la respuesta de back iniciaremos sesión o no
+ */
 function login() {
     const data = {
         email: emailLogin.value,
@@ -115,6 +104,8 @@ function login() {
             return response.json();
         })
         .then((mensaje) => {
+            document.cookie = `username=${mensaje.username}; expires=; path=/`;
+
             Swal.fire({
                 title: mensaje['mensaje'],
                 icon: "success",

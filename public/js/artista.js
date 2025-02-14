@@ -1,6 +1,7 @@
-function buscarArtista() {
-    let artista = document.getElementById("artista").value.trim();
-    console.log("Buscando artista: " ,artista);
+    let url = new URLSearchParams(window.location.search);
+    const artista = url.get("nombre")
+    console.log(artista);
+    console.log("hola")
     fetch(`https://spotify23.p.rapidapi.com/search?q=${artista}&type=artist&limit=5`, {
         method: 'GET',
         headers : {
@@ -40,7 +41,7 @@ function buscarArtista() {
                 console.log("Error al parsear la respuesta:", error);
             }
     })
-}
+
 
 
 
