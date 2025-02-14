@@ -10,11 +10,12 @@
   
   <div id="cancionDetalles">
     <p><strong>Nombre de la Canción:</strong> <span id="nombreCancion"></span></p>
-    <p><strong>Artista:</strong> <span id="nombreArtista"> <form action="masartista.html"><button type="submit">Ver mas del artista</button></form> </span></p>
+    <p><strong>Artista:</strong> <span id="nombreArtista"> </span></p>
+    <button onclick="enviarNombre()">Ver mas del Artista</button> 
     <h3>Letra:</h3>
     <div id="letra"></div>
   </div>
-
+ñ
   <button id="volver">Volver atrás</button>
 
   <script>
@@ -30,6 +31,9 @@
     document.getElementById('volver').addEventListener('click', () => {
         window.history.back();  
     });
+    function enviarNombre(){
+      window.location.href="masartista.html?nombre=" + encodeURIComponent(nombreArtista);
+    }
   </script>
 </body>
 </html>
