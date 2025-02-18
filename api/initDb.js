@@ -1,6 +1,9 @@
 const pool = require("./bd");//Carga el archivo db.js para la conexión con la bd y poder comunicarnos con la bd
 
-const createTables = async () => {
+/**
+ * Constante para crear la tabla de usuarios
+ */
+const createTableUsers = async () => {
     try {
         await pool.query(`
             CREATE TABLE IF NOT EXISTS users (
@@ -12,7 +15,28 @@ const createTables = async () => {
         `);
         console.log("✅ Tabla 'users' creada o ya existía.");
     } catch (err) {
-        console.error("❌ Error creando la tabla:", err);
+        console.error("❌ Error creando la tabla 'users':", err);
     }
 };
-createTables();
+
+const createTableFvSongs = async () => {
+    try {
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS favouriteSongs (
+                id_song INT PRIMARY KEY,
+                id INT,
+                length VARCHAR NOT NULL,
+                latitude VARCHAR NOT NULL,
+                CONSTRAINT fk_id_user
+                    FOREIGN KEY(id)
+                    REFERENCES users(id)
+            );
+        `);
+        console.log("✅ Tabla 'favouriteSongs' creada o ya existía.");
+    } catch (err) {
+        console.error("❌ Error creando la tabla 'favouriteSongs':", err);
+    }
+}
+
+createTableUsers();
+createTableFvSongs();
