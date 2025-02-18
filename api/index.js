@@ -37,6 +37,7 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/users/signin", async (req, res) => {
+try{
     const { email, username, password } = req.body;
     //comprobamos que no nos lleguen datos vacios
     if (!email || !username || !password) {
