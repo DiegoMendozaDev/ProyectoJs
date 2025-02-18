@@ -27,6 +27,49 @@ app.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/login.html"));
 });
 
+app.get("/token", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/token.html"));
+});
+app.get("/profile", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/profile.html"));
+});
+app.get('/get/profile', async (req, res) => {
+  // Extrae el encabezado 'Authorization'
+  const authHeader = req.headers['authorization'];
+  const response = await fetch('https://api.spotify.com/v1/me', {
+    headers: {
+      'Authorization': 'Bearer ' + authHeader
+    }
+  });
+
+  const dataProfile = await response.json();
+  res.json(dataProfile);
+})
+app.get('/get/token', async (req, res) => {
+  const urlToken = 'https://accounts.spotify.com/api/token';
+  const paramsToken = new URLSearchParams();
+  paramsToken.append('grant_type', 'client_credentials');
+  paramsToken.append('client_id', '5408e948e9b0457db78068dff74830da');         // Reemplaza por tu client id
+  paramsToken.append('client_secret', '34330400ae6947a4a216446089f8daa1');   // Reemplaza por tu client secret
+  try {
+    const responseToken = await fetch(urlToken, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: paramsToken.toString()
+    });
+    if (!responseToken.ok) {
+      return res.status(responseToken.status).json({ error: 'Error al obtener el token' });
+    }
+    const dataToken = await responseToken.json();
+    res.json(dataToken);
+  } catch (error) {
+    console.error('Error interno del servidor:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+})
+
 app.post("/users/signin", async (req, res) => {
   const { email, username, password } = req.body;
 
@@ -55,6 +98,31 @@ app.post("/users/signin", async (req, res) => {
     return res.status(500).json({
       mensaje: "Error del servidor",
     });
+  }
+});
+app.get('/artist', async (req, res) => {
+  try {
+    // Realizamos la petición a la API de Spotify
+    const response = await fetch('https://api.spotify.com/v1/artists/4Z8W4fKeB5YxbusRsdQVPb', {
+      headers: {
+        'Authorization': 'Bearer BQDBKJ5eo5jxbtpWjVOj7ryS84khybFpP_lTqzV7uV-T_m0cTfwvdn5BnBSKPxKgEb11'
+      }
+    });
+
+    // Verificamos que la respuesta sea correcta
+    if (!response.ok) {
+      return res
+        .status(response.status)
+        .json({ error: 'Error al obtener datos de Spotify' });
+    }
+
+    // Convertimos la respuesta a JSON
+    const data = await response.json();
+    // Enviamos los datos al cliente
+    res.json(data);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
