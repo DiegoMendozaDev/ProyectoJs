@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/egg.js/1.0/egg.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         if (!document.cookie) {
             window.location.href = "/login";
@@ -33,7 +34,7 @@
                 </select>
             </div>
             <input type="text" placeholder="Type a song" id="nombreCancion">
-            <button class="filter-button" id="searchLenguaje">
+            <button class="filter-button" id="searchButton">
                 <i class="fa-solid fa-magnifying-glass"></i>
             </button>
         </div>
@@ -47,7 +48,9 @@
         </div>
     </div>
     <div id="resultados"></div>
+    <div id="mapa"></div>
 </body>
 <script src="./js/index.js"></script>
+<script src="./js/songs.js"></script>
 <script src="./js/general.js"></script>
 </html>
