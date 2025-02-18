@@ -35,11 +35,9 @@ app.get("/signin", (req, res) => {
 app.get("/login", (req, res) => {
     res.sendFile(path.join(__dirname, "../public/login.html"));
 });
-/**
- * Directorio para registrr
- * es post ya que insertamos un usuario en la bd
- */
+
 app.post("/users/signin", async (req, res) => {
+try{
     const { email, username, password } = req.body;
     //comprobamos que no nos lleguen datos vacios
     if (!email || !username || !password) {
@@ -67,10 +65,13 @@ app.post("/users/signin", async (req, res) => {
     } catch (err) {
         return res.status(500).json({ mensaje: "Error del servidor" });
     }
+  } catch (err) {
+    return res.status(500).json({
+      mensaje: "Error del servidor",
+    });
+  }
 });
-/**
- * Directorio para iniciar sesión
- */
+
 app.post("/users/login", async (req, res) => {
     const { email, password } = req.body;
     //comprobamos que no nos lleguen datos vacios

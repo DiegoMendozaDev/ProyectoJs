@@ -24,7 +24,7 @@ const createTableFvSongs = async () => {
         await pool.query(`
             CREATE TABLE IF NOT EXISTS favouriteSongs (
                 id_song INT PRIMARY KEY,
-                id INT,
+                id_user INT,
                 length VARCHAR NOT NULL,
                 latitude VARCHAR NOT NULL,
                 CONSTRAINT fk_id_user
