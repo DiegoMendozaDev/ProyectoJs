@@ -1,7 +1,7 @@
 const url = 'https://spotify23.p.rapidapi.com/search/';
-const RAPIDAPI_KEY = '192947fff8mshc960bc1e0451cc8p1ed7d7jsnb36657bd97d6';
+const RAPIDAPI_KEY = 'a99e301354msh2b42c644dc00e32p1e223ajsn527118af6249';
 const delayTime = 1;
-const limit = 4;
+const limit = 1;
 const contenedor = document.getElementById('resultados');
 
 /**
@@ -97,8 +97,8 @@ async function buscarPorIdioma(idiomaElegido, intentos = 0, cancionesAcumuladas 
 
     addLoader();
 
-    const MAX_INTENTOS = 5;
-    const LIMIT = 4;
+    const MAX_INTENTOS = 2;
+    const LIMIT = 1;
 
     if (intentos >= MAX_INTENTOS) {
         removeLoader();
@@ -350,8 +350,14 @@ function addLoader() {
  * @param {*} cancion - objeto con la info del track
  */
 function addLetter(cancion) {
-    const card = document.createElement("div");
+    let cards = document.createElement("div");
+    cards.style.display = "flex";
+    cards.style.gap = "500px";
+    cards.style.width = "100%"
+    
+    let card = document.createElement("div");
     card.classList.add("card");
+    card.style.width = "600px"
 
     const titulo = document.createElement("h2");
     titulo.textContent = cancion.nombreCancion;
@@ -364,16 +370,17 @@ function addLetter(cancion) {
     const idioma = document.createElement("p");
     idioma.textContent = `Idioma: ${cancion.idioma}`;
     idioma.classList.add("idioma");
-
+    const idiomaLetra = cancion.idioma;
     const letra = document.createElement("div");
     letra.innerHTML = `<strong>Letra:</strong><br>${cancion.letra}`;
     letra.classList.add("letra");
+    const LetraATraducir = cancion.letra;
 
     card.appendChild(titulo);
     card.appendChild(artista);
     card.appendChild(idioma);
     card.appendChild(letra);
-
+    cards.appendChild(card);
     const goBack = document.createElement("a");
     goBack.textContent = "Go back";
     goBack.setAttribute("class", "button");
@@ -381,8 +388,97 @@ function addLetter(cancion) {
         contenedor.innerHTML = "";
     });
 
-    contenedor.appendChild(card);
-    contenedor.appendChild(goBack);
+
+
+
+
+const label = document.createElement('label');
+label.setAttribute('for', 'lenguaje');
+
+const select = document.createElement('select');
+select.setAttribute('id', 'lenguaje');
+
+const idiomas = [
+    { value: 'es', text: 'Español' },
+    { value: 'en', text: 'Inglés' },
+    { value: 'fr', text: 'Francés' },
+    { value: 'de', text: 'Alemán' },
+    { value: 'ru', text: 'Ruso' },
+    { value: 'ja', text: 'Japonés' },
+    { value: 'ca', text: 'Catalán' },
+];
+
+idiomas.forEach(idioma => {
+    const option = document.createElement('option');
+    option.setAttribute('value', idioma.value);
+    option.textContent = idioma.text;
+    select.appendChild(option);
+});
+
+document.body.appendChild(select);
+
+const boton = document.createElement('button');
+boton.setAttribute('id', 'mostrarTraduccion');
+boton.setAttribute("class", "button");
+boton.textContent = 'Mostrar traducción';
+let letraTraducida;
+let card2 = document.createElement("div");
+    card2.classList.add("card");
+boton.addEventListener('click', () => {
+    
+    
+    card2.innerHTML = ""
+    
+    const lenguajeSeleccionado = select.value;
+
+    const urlTraduccion = 'https://google-translator9.p.rapidapi.com/v2';
+
+const options = {
+  method: 'POST',
+  headers: {
+    'x-rapidapi-key': RAPIDAPI_KEY,
+    'x-rapidapi-host': 'google-translator9.p.rapidapi.com',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    q: LetraATraducir,
+    source: idiomaLetra,
+    target: lenguajeSeleccionado,
+    format : 'text'
+  })
+};
+
+fetch(urlTraduccion, options)
+  .then(response => {
+
+    if (!response.ok) {
+      throw new Error('Error en la respuesta de la API: ' + response.status);
+    }
+    return response.json();
+  })
+  .then(resultado => {
+    const letra = document.createElement("div");
+    letraTraducida = resultado["data"]["translations"][0]["translatedText"]
+    letra.innerHTML = `<strong>Letra traducida :<br></strong><br>${letraTraducida}`;
+    letra.classList.add("letra");
+    card2.appendChild(letra);
+    
+    cards.appendChild(card2)
+      
+  })
+  .catch(error => {
+    console.error('Error al traducir:', error);
+  });
+
+    
+});
+contenedor.appendChild(select)
+contenedor.appendChild(boton)
+contenedor.appendChild(goBack);
+contenedor.appendChild(cards); 
+
+
+
 }
 
 /**
