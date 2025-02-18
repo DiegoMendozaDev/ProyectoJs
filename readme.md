@@ -71,3 +71,6 @@
                 · Base de datos: Firebase, sqlite
 
                 · APIs: Integración con servicios como Spotify, Genius o YouTube para acceder a música y letras.
+
+3. DEPENDENCIAS
+     npm install express dotenv bcryptjs cors pg animate.css sweetalert2 --save
