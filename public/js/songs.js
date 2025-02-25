@@ -1,7 +1,7 @@
 const url = 'https://spotify23.p.rapidapi.com/search/';
 const RAPIDAPI_KEY = '93a81c79admsh13fbd50c47698dbp1ad109jsnd36fba0715ef';
-const delayTime = 4;
-const limit = 1;
+const delayTime = 1;
+const limit = 4;
 const contenedor = document.getElementById('resultados');
 
 /**

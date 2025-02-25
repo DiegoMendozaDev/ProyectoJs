@@ -35,7 +35,7 @@ app.get("/signin", (req, res) => {
 app.get("/login", (req, res) => {
     res.sendFile(path.join(__dirname, "../public/login.html"));
 });
-app.get("/ver/favs", async (req, res) => {
+app.post("/ver/favs", async (req, res) => {
     const {idUser} = req.body;
     //comprobamos que no nos lleguen datos vacios
     if (!idUser) {
@@ -47,8 +47,7 @@ app.get("/ver/favs", async (req, res) => {
         const resultSelectUname = await db.query(querySelectUname, [idUser]);
         //si se ha encontrado devolvemos un estado 400 (ervidor no pudo interpretar la solicitud dada una sintaxis inválida)
         if (resultSelectUname.rows.length > 0) {
-            $todasCanciones = await db.query(resultSelectUname, [idUser]);
-            return res.status(201).json({ mensaje: "Canción eliminada de favoritos" });
+            return res.status(200).json({ cancionesArray: resultSelectUname });
         }
     } catch (err) {
         return res.status(500).json({ mensaje: "Error del servidor"});
