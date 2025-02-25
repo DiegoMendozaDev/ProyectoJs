@@ -35,6 +35,25 @@ app.get("/signin", (req, res) => {
 app.get("/login", (req, res) => {
     res.sendFile(path.join(__dirname, "../public/login.html"));
 });
+app.get("/ver/favs", async (req, res) => {
+    const {idUser} = req.body;
+    //comprobamos que no nos lleguen datos vacios
+    if (!idUser) {
+        return res.status(400).json({ mensaje: "Todos los campos son obligatorios" });
+    }
+    //vemos si esa canción ya se ha añadido a favorito
+    const querySelectUname = "SELECT * FROM favouriteSongs WHERE id_user = $1";
+    try {
+        const resultSelectUname = await db.query(querySelectUname, [idUser]);
+        //si se ha encontrado devolvemos un estado 400 (ervidor no pudo interpretar la solicitud dada una sintaxis inválida)
+        if (resultSelectUname.rows.length > 0) {
+            $todasCanciones = await db.query(resultSelectUname, [idUser]);
+            return res.status(201).json({ mensaje: "Canción eliminada de favoritos" });
+        }
+    } catch (err) {
+        return res.status(500).json({ mensaje: "Error del servidor"});
+    }
+});
 
 app.post("/users/signin", async (req, res) => {
 try{
@@ -85,7 +104,9 @@ app.post("/users/favs", async(req, res)=>{
 
         //si se ha encontrado devolvemos un estado 400 (ervidor no pudo interpretar la solicitud dada una sintaxis inválida)
         if (resultSelectUname.rows.length > 0) {
-            return res.status(400).json({ mensaje: "Canción ya guarda en favoritos" });
+            const queryDelectUname = "DELETE FROM favouriteSongs WHERE id_song = $1 AND id_user = $2";
+            await db.query(queryDelectUname, [idSong,idUser]);
+            return res.status(201).json({ mensaje: "Canción eliminada de favoritos" });
         }
         //insertamos
         const queryInsert = "INSERT INTO favouriteSongs (id_song, id_user) VALUES ($1, $2)";
