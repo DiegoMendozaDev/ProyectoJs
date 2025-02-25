@@ -1,5 +1,5 @@
 const url = 'https://spotify23.p.rapidapi.com/search/';
-const RAPIDAPI_KEY = '192947fff8mshc960bc1e0451cc8p1ed7d7jsnb36657bd97d6';
+const RAPIDAPI_KEY = '93a81c79admsh13fbd50c47698dbp1ad109jsnd36fba0715ef';
 const delayTime = 1;
 const limit = 4;
 const contenedor = document.getElementById('resultados');
@@ -57,9 +57,9 @@ function fetchLetra(idCancion) {
  * @param {string} idiomaElegido - Idioma deseado (opcional).
  */
 function mostrarCancion(data, contenedor, idiomaElegido = null) {
-    const { nombreCancion, nombreArtista, letra, lenguaje, img } = data;
+    const { idCancion ,nombreCancion, nombreArtista, letra, lenguaje, img } = data;
     removeLoader();
-    addMusic(nombreCancion, nombreArtista, idiomaElegido || lenguaje, img);
+    addMusic(idCancion ,nombreCancion, nombreArtista, idiomaElegido || lenguaje, img);
     removeLoader();
 
     const aSeeSong = contenedor.querySelector('.music:last-child .music-content button');
@@ -126,7 +126,6 @@ async function buscarPorIdioma(idiomaElegido, intentos = 0, cancionesAcumuladas 
     try {
         const data = await fetchCanciones(offset);
         const tracks = data.tracks.items;
-
         if (tracks.length > 0) {
             for (const track of tracks) {
                 const idCancion = track.data.id;
@@ -174,6 +173,7 @@ async function buscarPorIdioma(idiomaElegido, intentos = 0, cancionesAcumuladas 
     }
 
     buscarPorIdioma(idiomaElegido, intentos + 1, cancionesAcumuladas);
+    addFav();
 }
 
 /**
@@ -199,7 +199,7 @@ async function buscarPorCancion(nombreCancion) {
 
                 const letraData = await fetchLetra(idCancion);
                 removeLoader();
-                mostrarCancion({ nombreCancion, nombreArtista, letra: letraData.lyrics.lines.map(line => line.words).join('<br>'), img }, contenedor);
+                mostrarCancion({ idCancion,nombreCancion, nombreArtista, letra: letraData.lyrics.lines.map(line => line.words).join('<br>'), img }, contenedor);
                 removeLoader();
             }
 
@@ -217,6 +217,7 @@ async function buscarPorCancion(nombreCancion) {
         console.error('Error en la búsqueda por canción:', error);
         removeLoader();
     }
+    addFav();
 }
 
 /**
@@ -226,7 +227,7 @@ async function buscarPorCancion(nombreCancion) {
  * @param {string} idioma - Idioma de la canción.
  * @param {string} img - URL de la imagen de la canción.
  */
-function addMusic(nombreCancion, nombreArtista, idioma, img) {
+function addMusic(idCancion ,nombreCancion, nombreArtista, idioma, img) {
     let divMusic = document.createElement("div");
     divMusic.setAttribute('class', 'music');
 
@@ -234,6 +235,7 @@ function addMusic(nombreCancion, nombreArtista, idioma, img) {
     divMusicFavourite.setAttribute('class', 'music-favourite');
     let spanMusicFavourite = document.createElement("span");
     spanMusicFavourite.setAttribute('class', 'material-symbols-outlined');
+    spanMusicFavourite.setAttribute('id', idCancion);
     spanMusicFavourite.textContent = "bookmark";
     divMusicFavourite.appendChild(spanMusicFavourite);
 
@@ -405,4 +407,5 @@ document.getElementById('searchButton').addEventListener('click', () => {
     } else {
         buscarPorCancion(nombreCancion);
     }
+
 });
