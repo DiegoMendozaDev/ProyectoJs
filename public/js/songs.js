@@ -1,8 +1,10 @@
 const url = 'https://spotify23.p.rapidapi.com/search/';
-const RAPIDAPI_KEY = '93a81c79admsh13fbd50c47698dbp1ad109jsnd36fba0715ef';
+const RAPIDAPI_KEY = 'ff51a3b669msh24bec5edc06d06ap1dab0ejsnddf24f4fd9ad';
 const delayTime = 1;
-const limit = 4;
+const limit = 3;
 const contenedor = document.getElementById('resultados');
+// La 'cookieSeparadas' está definida previamente.
+const idUsuario = cookieSeparadas[1].split('=')[1];
 
 /**
  * Obtiene una lista de canciones basada en un offset aleatorio o un nombre de artista.
@@ -10,7 +12,7 @@ const contenedor = document.getElementById('resultados');
  * @param {string} nombreArtista - Nombre del artista para buscar canciones específicas.
  * @returns {Promise} - Promesa con los datos de las canciones.
  */
-function fetchCanciones(offset, nombreArtista = "") {
+async function fetchCanciones(offset, nombreArtista = "") {
     const query = nombreArtista ? nombreArtista : 'track';//TERNARIA (COMO UN IF)
     const endpoint = nombreArtista ? `${url}?q=${nombreArtista}&type=track&limit=${limit}` : `${url}?q=${query}&type=track&offset=${offset}&limit=${limit}`;
 
@@ -34,7 +36,7 @@ function fetchCanciones(offset, nombreArtista = "") {
  * @param {string} idCancion - ID de la canción.
  * @returns {Promise} - Promesa con los datos de la letra y el idioma.
  */
-function fetchLetra(idCancion) {
+async function fetchLetra(idCancion) {
     return fetch(`https://spotify23.p.rapidapi.com/track_lyrics/?id=${idCancion}`, {
         method: 'GET',
         headers: {
@@ -57,12 +59,12 @@ function fetchLetra(idCancion) {
  * @param {string} idiomaElegido - Idioma deseado (opcional).
  */
 function mostrarCancion(data, contenedor, idiomaElegido = null) {
-    const { idCancion ,nombreCancion, nombreArtista, letra, lenguaje, img } = data;
+    const { idCancion, nombreCancion, nombreArtista, letra, lenguaje, img } = data;
     removeLoader();
-    addMusic(idCancion ,nombreCancion, nombreArtista, idiomaElegido || lenguaje, img);
+    addMusic(idCancion, nombreCancion, nombreArtista, idiomaElegido || lenguaje, img);
     removeLoader();
 
-    const aSeeSong = contenedor.querySelector('.music:last-child .music-content button');
+    const aSeeSong = contenedor.querySelector('.music:last-child .music-content #seeSong');
     aSeeSong.addEventListener('click', () => {
         const parametros = {
             nombreCancion,
@@ -83,12 +85,13 @@ function mostrarCancion(data, contenedor, idiomaElegido = null) {
  * @param {Array} cancionesAcumuladas - Canciones encontradas hasta el momento (opcional).
  */
 async function buscarPorIdioma(idiomaElegido, intentos = 0, cancionesAcumuladas = []) {
-    if (!idiomaElegido) {
+    if (!idiomaElegido || idiomaElegido == 0) {
         Swal.fire({
             icon: "error",
             title: "Oops...",
             text: "Introduce un lenguaje válido."
         });
+        removeLoader()
         return;
     }
 
@@ -97,8 +100,8 @@ async function buscarPorIdioma(idiomaElegido, intentos = 0, cancionesAcumuladas 
 
     addLoader();
 
-    const MAX_INTENTOS = 2;
-    const LIMIT = 1;
+    const MAX_INTENTOS = 5;
+    const LIMIT = 4;
 
     if (intentos >= MAX_INTENTOS) {
         removeLoader();
@@ -126,6 +129,7 @@ async function buscarPorIdioma(idiomaElegido, intentos = 0, cancionesAcumuladas 
     try {
         const data = await fetchCanciones(offset);
         const tracks = data.tracks.items;
+
         if (tracks.length > 0) {
             for (const track of tracks) {
                 const idCancion = track.data.id;
@@ -154,7 +158,7 @@ async function buscarPorIdioma(idiomaElegido, intentos = 0, cancionesAcumuladas 
             if (cancionesAcumuladas.length >= LIMIT) {
                 removeLoader();
                 cancionesAcumuladas.forEach(cancion => {
-                    mostrarCancion(cancion, contenedor, idiomaElegido);
+                    mostrarCancion(idCancion, cancion, contenedor, idiomaElegido);
                 });
                 return;
             }
@@ -197,9 +201,29 @@ async function buscarPorCancion(nombreCancion) {
                 const nombreArtista = track.data.artists.items[0].profile.name;
                 const img = track.data.albumOfTrack.coverArt.sources[0].url;
 
-                const letraData = await fetchLetra(idCancion);
-                removeLoader();
-                mostrarCancion({ idCancion,nombreCancion, nombreArtista, letra: letraData.lyrics.lines.map(line => line.words).join('<br>'), img }, contenedor);
+                try {
+                    const letraData = await fetchLetra(idCancion);
+                    if (!letraData || !letraData.lyrics || !letraData.lyrics.lines) {
+                        throw new Error("No se encontró la letra");
+                    }
+
+                    mostrarCancion({
+                        idCancion,
+                        nombreCancion,
+                        nombreArtista,
+                        letra: letraData.lyrics.lines.map(line => line.words).join('<br>'),
+                        lenguaje: letraData.lyrics.language,
+                        img
+                    }, contenedor);
+
+                } catch (error) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "No se ha podido encontrar la letra de la canción."
+                    });
+                }
+
                 removeLoader();
             }
 
@@ -211,7 +235,6 @@ async function buscarPorCancion(nombreCancion) {
                 title: "Oops...",
                 text: "No se encontraron canciones para la consulta."
             });
-            removeLoader();
         }
     } catch (error) {
         console.error('Error en la búsqueda por canción:', error);
@@ -227,7 +250,7 @@ async function buscarPorCancion(nombreCancion) {
  * @param {string} idioma - Idioma de la canción.
  * @param {string} img - URL de la imagen de la canción.
  */
-function addMusic(idCancion ,nombreCancion, nombreArtista, idioma, img) {
+function addMusic(idCancion, nombreCancion, nombreArtista, idioma, img) {
     let divMusic = document.createElement("div");
     divMusic.setAttribute('class', 'music');
 
@@ -247,24 +270,30 @@ function addMusic(idCancion ,nombreCancion, nombreArtista, idioma, img) {
 
     let divMusicContent = document.createElement("div");
     divMusicContent.setAttribute('class', 'music-content');
+
     let pTitle = document.createElement("p");
     pTitle.setAttribute('id', 'music-title');
     pTitle.textContent = nombreCancion;
-    let pArtirs = document.createElement("p");
-    pArtirs.setAttribute('id', 'music-artist');
-    pArtirs.textContent = nombreArtista + "🧑‍🎤";
+
+    let buttonArtirs = document.createElement("button");
+    buttonArtirs.setAttribute('id', 'music-artist');
+    buttonArtirs.setAttribute('class', 'button');
+    buttonArtirs.setAttribute('type', 'button');
+    buttonArtirs.textContent = nombreArtista;//+ "🧑‍🎤"
+    buttonArtirs.addEventListener("click", () => buscarArtista(buttonArtirs.textContent));
+
     let pLenguaje = document.createElement("p");
     pLenguaje.setAttribute('id', 'music-leanguaje');
     pLenguaje.textContent = idioma;
 
-    // Cambiar el elemento <a> por un <button>
     let buttonSeeSong = document.createElement("button");
     buttonSeeSong.textContent = "See song🎵";
-    buttonSeeSong.setAttribute('class', 'button'); // Aplicar la clase de estilo
-    buttonSeeSong.setAttribute('type', 'button'); // Especificar el tipo de botón
+    buttonSeeSong.setAttribute('id', 'seeSong');
+    buttonSeeSong.setAttribute('class', 'button');
+    buttonSeeSong.setAttribute('type', 'button');
 
     divMusicContent.appendChild(pTitle);
-    divMusicContent.appendChild(pArtirs);
+    divMusicContent.appendChild(buttonArtirs);
     divMusicContent.appendChild(pLenguaje);
     divMusicContent.appendChild(buttonSeeSong);
 
@@ -356,7 +385,7 @@ function addLetter(cancion) {
     cards.style.display = "flex";
     cards.style.gap = "500px";
     cards.style.width = "100%"
-    
+
     let card = document.createElement("div");
     card.classList.add("card");
     card.style.width = "600px"
@@ -383,6 +412,7 @@ function addLetter(cancion) {
     card.appendChild(idioma);
     card.appendChild(letra);
     cards.appendChild(card);
+
     const goBack = document.createElement("a");
     goBack.textContent = "Go back";
     goBack.setAttribute("class", "button");
@@ -390,97 +420,97 @@ function addLetter(cancion) {
         contenedor.innerHTML = "";
     });
 
+    const label = document.createElement('label');
+    label.setAttribute('for', 'lenguaje');
 
+    const select = document.createElement('select');
+    select.setAttribute("class", "smooth-select");
+    select.setAttribute('id', 'lenguaje');
 
+    const idiomas = [
+        { value: '0', text: 'Select a language' },
+        { value: 'es', text: 'Español' },
+        { value: 'en', text: 'Inglés' },
+        { value: 'fr', text: 'Francés' },
+        { value: 'de', text: 'Alemán' },
+        { value: 'ru', text: 'Ruso' },
+        { value: 'ja', text: 'Japonés' },
+        { value: 'ca', text: 'Catalán' },
+    ];
 
+    idiomas.forEach(idioma => {
+        const option = document.createElement('option');
+        option.setAttribute('value', idioma.value);
+        option.textContent = idioma.text;
+        select.appendChild(option);
+    });
 
-const label = document.createElement('label');
-label.setAttribute('for', 'lenguaje');
+    document.body.appendChild(select);
 
-const select = document.createElement('select');
-select.setAttribute('id', 'lenguaje');
-
-const idiomas = [
-    { value: 'es', text: 'Español' },
-    { value: 'en', text: 'Inglés' },
-    { value: 'fr', text: 'Francés' },
-    { value: 'de', text: 'Alemán' },
-    { value: 'ru', text: 'Ruso' },
-    { value: 'ja', text: 'Japonés' },
-    { value: 'ca', text: 'Catalán' },
-];
-
-idiomas.forEach(idioma => {
-    const option = document.createElement('option');
-    option.setAttribute('value', idioma.value);
-    option.textContent = idioma.text;
-    select.appendChild(option);
-});
-
-document.body.appendChild(select);
-
-const boton = document.createElement('button');
-boton.setAttribute('id', 'mostrarTraduccion');
-boton.setAttribute("class", "button");
-boton.textContent = 'Mostrar traducción';
-let letraTraducida;
-let card2 = document.createElement("div");
+    const boton = document.createElement('button');
+    boton.setAttribute('id', 'mostrarTraduccion');
+    boton.setAttribute("class", "filter-button");
+    const i = document.createElement("i");
+    i.setAttribute("class", "fa-solid fa-language");
+    let letraTraducida;
+    let card2 = document.createElement("div");
     card2.classList.add("card");
-boton.addEventListener('click', () => {
-    
-    
-    card2.innerHTML = ""
-    
-    const lenguajeSeleccionado = select.value;
+    boton.appendChild(i);
+    boton.addEventListener('click', () => {
+        card2.innerHTML = ""
 
-    const urlTraduccion = 'https://google-translator9.p.rapidapi.com/v2';
+        const lenguajeSeleccionado = select.value;
+        if (lenguajeSeleccionado != 0) {
+            const urlTraduccion = 'https://google-translator9.p.rapidapi.com/v2';
 
-const options = {
-  method: 'POST',
-  headers: {
-    'x-rapidapi-key': RAPIDAPI_KEY,
-    'x-rapidapi-host': 'google-translator9.p.rapidapi.com',
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    q: LetraATraducir,
-    source: idiomaLetra,
-    target: lenguajeSeleccionado,
-    format : 'text'
-  })
-};
+            const options = {
+                method: 'POST',
+                headers: {
+                    'x-rapidapi-key': RAPIDAPI_KEY,
+                    'x-rapidapi-host': 'google-translator9.p.rapidapi.com',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    q: LetraATraducir,
+                    source: idiomaLetra,
+                    target: lenguajeSeleccionado,
+                    format: 'text'
+                })
+            };
 
-fetch(urlTraduccion, options)
-  .then(response => {
+            fetch(urlTraduccion, options)
+                .then(response => {
 
-    if (!response.ok) {
-      throw new Error('Error en la respuesta de la API: ' + response.status);
-    }
-    return response.json();
-  })
-  .then(resultado => {
-    const letra = document.createElement("div");
-    letraTraducida = resultado["data"]["translations"][0]["translatedText"]
-    letra.innerHTML = `<strong>Letra traducida :<br></strong><br>${letraTraducida}`;
-    letra.classList.add("letra");
-    card2.appendChild(letra);
-    
-    cards.appendChild(card2)
-      
-  })
-  .catch(error => {
-    console.error('Error al traducir:', error);
-  });
+                    if (!response.ok) {
+                        throw new Error('Error en la respuesta de la API: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(resultado => {
+                    const letra = document.createElement("div");
+                    letraTraducida = resultado["data"]["translations"][0]["translatedText"]
+                    letra.innerHTML = `<strong>Letra traducida :<br></strong><br>${letraTraducida}`;
+                    letra.classList.add("letra");
+                    card2.appendChild(letra);
 
-    
-});
-contenedor.appendChild(select)
-contenedor.appendChild(boton)
-contenedor.appendChild(goBack);
-contenedor.appendChild(cards); 
+                    cards.appendChild(card2)
 
-
-
+                })
+                .catch(error => {
+                    console.error('Error al traducir:', error);
+                });
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Idioma no válido"
+            });
+        }
+    });
+    contenedor.appendChild(select)
+    contenedor.appendChild(boton)
+    contenedor.appendChild(goBack);
+    contenedor.appendChild(cards);
 }
 
 /**
@@ -493,15 +523,269 @@ function removeLoader() {
     }
 }
 
+/**
+ * Añadir favoritos
+ */
+function addFav() {
+    //Obtener todos los elementos con la clase "material-symbols-outlined"
+    let favs = document.getElementsByClassName("material-symbols-outlined");
+
+    //Iteramos usando un bucle for para recorrer solo los índices numéricos
+    for (let i = 0; i < favs.length; i++) {
+        favs[i].addEventListener("click", favourite);
+    }
+
+    function favourite() {
+        const data = {
+            idSong: this.id,
+            idUser: idUsuario,
+        };
+        console.log(data);
+        fetch("/users/favs", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                // Si la respuesta no es exitosa, se muestra el error y se detiene la cadena
+                if (!response.ok) {
+                    return response.json().then(mensaje => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: mensaje['mensaje']
+                        });
+                        mostrarNotificacion(mensaje['mensaje']);
+                        throw new Error(mensaje['mensaje']);
+                    });
+                }
+                return response.json();
+            })
+            .then(mensaje => {
+                Swal.fire({
+                    title: mensaje['mensaje'],
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                mostrarNotificacion(mensaje['mensaje']);
+                setTimeout(() => {
+                    window.location.href = "/";
+                }, 1700);
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+    }
+}
+
+/**
+ * Medianmte fetch atacamos a nuestro endpoint, obtenemos los id de las canciones guardadas y llamamos a mostrarCancionFavorita para imprimirlas
+ * @param {*} idUser - el id del usuario actual sacado mediante el split a la cookie
+ */
+async function getFavourites(idUser) {
+    try {
+        const response = await fetch("/ver/favs", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ idUser })
+        });
+
+        const canciones = await response.json();
+
+        contenedor.innerHTML = '';
+
+        for (const cancion of canciones.cancionesArray.rows) {
+            const idCancion = cancion.id_song;
+            await mostrarCancionFavorita(idCancion, contenedor);
+        }
+
+    } catch (error) {
+        console.error("Error al obtener favoritos:", error);
+    }
+}
+
+/**
+ * Obtiene la información completa de una canción y la muestra en el contenedor.
+ * @param {string} idCancion - ID de la canción.
+ * @param {HTMLElement} contenedor - Contenedor donde se mostrará la canción.
+ */
+async function mostrarCancionFavorita(idCancion, contenedor) {
+    try {
+        const trackInfo = await fetch(`https://spotify23.p.rapidapi.com/tracks/?ids=${idCancion}`, {
+            method: 'GET',
+            headers: {
+                'X-RapidAPI-Host': 'spotify23.p.rapidapi.com',
+                'X-RapidAPI-Key': RAPIDAPI_KEY,
+                'Content-Type': 'application/json',
+            },
+        }).then(response => response.json());
+
+        const track = trackInfo.tracks[0];
+        const nombreCancion = track.name;
+        const nombreArtista = track.artists[0].name;
+        const img = track.album.images[0].url;
+
+        const letraData = await fetchLetra(idCancion);
+        const lenguaje = letraData.lyrics.language;
+        const letra = letraData.lyrics.lines.map(line => line.words).join('<br>');
+
+        mostrarCancion({ idCancion, nombreCancion, nombreArtista, letra, lenguaje, img }, contenedor);
+        addFav();
+    } catch (error) {
+        console.error('Error al obtener la información de la canción:', error);
+    }
+}
+
+/**
+ * Función para mostrar la notificación
+ * @param {*} mensaje - Dependiendo de la acción muestra un mensaje u otro
+ */
+function mostrarNotificacion(mensaje) {
+    var opciones = {
+        body: mensaje,
+        icon: "https://via.placeholder.com/100",
+        tag: "notificacion-demo",
+        requireInteraction: true
+    };
+
+    var notificacion = new Notification("¡Notificación Activa!", opciones);
+
+    notificacion.onclick = function () {
+        window.open("https://www.google.com");
+    };
+
+    notificacion.onclose = function () {
+        console.log("Notificación cerrada.");
+    };
+
+    notificacion.onshow = function () {
+        console.log("Notificación mostrada.");
+    };
+
+    notificacion.onerror = function () {
+        console.log("Error al mostrar la notificación.");
+    };
+}
+
+/**
+ * FUncióm para obtener información de un artista
+ * @param {*} artista - Nombre del artista pasado mediante un evento click al crearse la carta con la información de la musica
+ */
+async function buscarArtista(artista) {
+    try {
+        const response = await fetch(`https://spotify23.p.rapidapi.com/search?q=${artista}&type=artist&limit=5`, {
+            method: 'GET',
+            headers: {
+                'X-RapidAPI-Host': 'spotify23.p.rapidapi.com',
+                'X-RapidAPI-Key': 'ff51a3b669msh24bec5edc06d06ap1dab0ejsnddf24f4fd9ad',
+                'Content-Type': 'application/json',
+            }
+        });
+
+        const data = await response.json();
+        const artistaData = data.artists.items[0].data.profile;
+        const avatarUrl = data.artists.items[0].data.visuals.avatarImage.sources[2].url;
+        const canciones = data.albums.items.map(album => album.data.name);
+
+        contenedor.innerHTML = "";
+
+        let cards = document.createElement("div");
+        cards.classList.add("cards-container");
+
+        let card = document.createElement("div");
+        card.classList.add("card");
+
+        let titulo = document.createElement("h2");
+        titulo.textContent = `Canciones recomendadas por Spotify de ${artistaData.name}`;
+        titulo.classList.add("titulo");
+
+        let listaCanciones = document.createElement("ul");
+        listaCanciones.classList.add("lista-canciones");
+        canciones.forEach(cancion => {
+            let li = document.createElement("li");
+            li.textContent = cancion;
+            listaCanciones.appendChild(li);
+        });
+
+        let img = document.createElement("img");
+        img.setAttribute("src", avatarUrl);
+        img.classList.add("artista-img");
+
+        let imgTitulo = document.createElement("h3");
+        imgTitulo.textContent = `Foto de ${artistaData.name}`;
+
+        const goBack = document.createElement("a");
+        goBack.textContent = "Go back";
+        goBack.setAttribute("class", "button");
+        goBack.addEventListener("click", function () {
+            contenedor.innerHTML = "";
+        });
+
+        card.appendChild(titulo);
+        card.appendChild(listaCanciones);
+        card.appendChild(imgTitulo);
+        card.appendChild(img);
+        cards.appendChild(card);
+
+        contenedor.appendChild(cards);
+        contenedor.appendChild(goBack);
+    } catch (error) {
+        console.error("Error al obtener datos del artista:", error);
+    }
+}
+
+// Event listener para el botón de ver favoritos
+document.querySelector('.user-container').addEventListener("click", () => getFavourites(idUsuario));
+
 // Event listener para el botón de búsqueda
 document.getElementById('searchButton').addEventListener('click', () => {
     const idiomaElegido = document.getElementById('lenguaje').value.trim();
     const nombreCancion = document.getElementById('nombreCancion').value.trim();
     addLoader();
-    if (nombreCancion === "") {
-        buscarPorIdioma(idiomaElegido);
-    } else {
-        buscarPorCancion(nombreCancion);
+    !nombreCancion ? buscarPorIdioma(idiomaElegido) : buscarPorCancion(nombreCancion);
+});
+
+//Comprobamos que tenga activado tanto las notificaciones como la geolocalización
+document.addEventListener("DOMContentLoaded", function () {
+    if (Notification.permission === "granted") {
+        console.log("Permiso de notificación ya concedido.");
+    } else if (Notification.permission !== "denied") {
+        Notification.requestPermission(function (permiso) {
+            if (permiso === "granted") {
+                console.log("Permiso de notificación concedido.");
+
+            } else {
+                console.warn("Permiso de notificación denegado.");
+            }
+        });
     }
 
+    if ("geolocation" in navigator) {
+        console.log("La API de geolocalización está disponible.");
+        //Ver mapa
+        navigator.geolocation.getCurrentPosition(
+            function map(position) {
+                var map = L.map('map').setView([position.coords.latitude, position.coords.longitude], 15);
+
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                }).addTo(map);
+
+                L.control.scale().addTo(map);
+                L.marker([position.coords.latitude, position.coords.longitude]).addTo(map);
+            },
+            function error(error) {
+                console.error('Error al obtener la ubicación: ', error);
+            },
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+        );
+    } else {
+        console.error("La API de geolocalización no es compatible con este navegador.");
+    }
 });
