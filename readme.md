@@ -68,9 +68,9 @@
 
                 · Backend: Node.js
 
-                · Base de datos: Firebase, sqlite
+                · Base de datos: Postgresql
 
-                · APIs: Integración con servicios como Spotify, Genius o YouTube para acceder a música y letras.
+                · APIs: Spotify, Google Translator de Rapidapi para acceder a música y letras.
 
 3. DEPENDENCIAS
      npm install express dotenv bcryptjs cors pg animate.css sweetalert2 --save
