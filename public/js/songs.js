@@ -813,7 +813,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     method: 'GET',
                     headers: {
                         'X-RapidAPI-Host': 'concerts-artists-events-tracker.p.rapidapi.com',
-                        'X-RapidAPI-Key': RAPIDAPI_KEY,
+                        'X-RapidAPI-Key': 'a99e301354msh2b42c644dc00e32p1e223ajsn527118af6249',
                         'Content-Type': 'application/json',
                     }
                 }).then(response => response.json()).
