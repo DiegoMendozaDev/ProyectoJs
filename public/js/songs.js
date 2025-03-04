@@ -682,7 +682,7 @@ async function buscarArtista(artista) {
             method: 'GET',
             headers: {
                 'X-RapidAPI-Host': 'spotify23.p.rapidapi.com',
-                'X-RapidAPI-Key': 'ff51a3b669msh24bec5edc06d06ap1dab0ejsnddf24f4fd9ad',
+                'X-RapidAPI-Key': RAPIDAPI_KEY,
                 'Content-Type': 'application/json',
             }
         });
