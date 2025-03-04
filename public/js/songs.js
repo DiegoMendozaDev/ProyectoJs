@@ -787,12 +787,7 @@ document.addEventListener("DOMContentLoaded", function () {
     navigator.geolocation.getCurrentPosition(//successCallback, errorCallback, options)
         //Si es correcto
         function (position) {
-            let notificacion = new Notification("Exito en conseguir tu ubicación", {
-                body: "Ubicacion Obtenida",
-                tag: "Ubi",
-                requireInteraction: true,
-
-            });
+            mostrarNotificacion("Exito al conseguir tu ubicación");
             console.log("Latitud:", position.coords.latitude);
             console.log("Longitud:", position.coords.longitude);
             /**
